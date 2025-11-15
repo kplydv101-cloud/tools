@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online tool to convert images to PDF with adjustable compression. Optimize your images and download as PDF instantly.">
+    <meta name="keywords" content="image to PDF, image converter, PDF creator, compress images, online tool">
+    <title>ImageToPDF - Convert Images to PDF with Compression | Free Online Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4bb543;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background-color: white;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 2rem;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tool-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .upload-area p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5e08a0;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #3f9c38;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .compression-options {
+            margin: 2rem 0;
+        }
+
+        .compression-options h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .compression-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .compression-level {
+            background-color: var(--light);
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .compression-level:hover {
+            border-color: var(--primary);
+        }
+
+        .compression-level.active {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        .compression-level h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .compression-level p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .quality-slider {
+            margin-top: 1rem;
+        }
+
+        .quality-slider label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider-container input {
+            flex: 1;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .image-preview {
+            margin-top: 2rem;
+        }
+
+        .image-preview h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .ad-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .ad-container h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .ad-placeholder {
+            background-color: var(--light);
+            border: 1px dashed #ccc;
+            padding: 3rem 1rem;
+            border-radius: var(--border-radius);
+            color: var(--gray);
+        }
+
+        .features {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+        }
+
+        .features h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .features ul {
+            list-style: none;
+        }
+
+        .features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features li:last-child {
+            border-bottom: none;
+        }
+
+        .features i {
+            color: var(--success);
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #adb5bd;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #495057;
+            color: #adb5bd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .status-success {
+            background-color: rgba(75, 181, 67, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .status-info {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-pdf"></i>
+                    <h1>ImageToPDF</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h2>Convert Images to PDF in Seconds</h2>
+            <p>Optimize your images with adjustable compression and convert them to high-quality PDF files. Free, fast, and easy to use!</p>
+            <a href="#tool" class="btn btn-large">Get Started</a>
+        </section>
+
+        <div class="main-content">
+            <div class="tool-container" id="tool">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Drag & Drop Your Images Here</h3>
+                    <p>Supported formats: JPG, PNG, GIF, BMP</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+                    <button class="btn" id="selectFilesBtn">Select Images</button>
+                </div>
+
+                <div class="compression-options">
+                    <h3>Compression Level</h3>
+                    <div class="compression-levels">
+                        <div class="compression-level active" data-level="high">
+                            <h4>High Quality</h4>
+                            <p>Larger file size</p>
+                        </div>
+                        <div class="compression-level" data-level="medium">
+                            <h4>Balanced</h4>
+                            <p>Good quality & size</p>
+                        </div>
+                        <div class="compression-level" data-level="low">
+                            <h4>Small Size</h4>
+                            <p>Optimized for sharing</p>
+                        </div>
+                    </div>
+                    <div class="quality-slider">
+                        <label for="qualityRange">Image Quality: <span class="slider-value" id="qualityValue">80</span>%</label>
+                        <div class="slider-container">
+                            <input type="range" id="qualityRange" min="10" max="100" value="80">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-preview">
+                    <h3>Selected Images</h3>
+                    <div class="preview-container" id="previewContainer">
+                        <!-- Preview items will be added here dynamically -->
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-large" id="convertBtn" disabled>
+                        <i class="fas fa-file-pdf"></i> Convert to PDF
+                    </button>
+                    <button class="btn btn-secondary btn-large" id="clearBtn">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    <a href="#" class="btn btn-success btn-large hidden" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                </div>
+
+                <div id="statusMessage" class="status-message hidden"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="ad-container">
+                    <h3>Advertisement</h3>
+                    <div class="ad-placeholder">
+                        <!-- Replace with your Google AdSense code -->
+                        <p>Ad Space (300x250)</p>
+                        <p>Insert AdSense Ad Unit ID here</p>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <h3>Why Choose Our Tool?</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> 100% Free to Use</li>
+                        <li><i class="fas fa-check-circle"></i> No Registration Required</li>
+                        <li><i class="fas fa-check-circle"></i> Adjustable Compression</li>
+                        <li><i class="fas fa-check-circle"></i> High-Quality Output</li>
+                        <li><i class="fas fa-check-circle"></i> Secure & Private</li>
+                        <li><i class="fas fa-check-circle"></i> Works on All Devices</li>
+                    </ul>
+                </div>
+
+                <div class="ad-container">
+                    <h3>Advertisement</h3>
+                    <div class="ad-placeholder">
+                        <!-- Replace with your Google AdSense code -->
+                        <p>Ad Space (300x600)</p>
+                        <p>Insert AdSense Ad Unit ID here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ImageToPDF</h3>
+                    <p>Convert your images to PDF files quickly and easily with our free online tool. No installation required.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="#">Home</a>
+                    <a href="#">How It Works</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <a href="mailto:support@imagetopdf.com">support@imagetopdf.com</a>
+                    <p>Follow us on social media</p>
+                    <div style="margin-top: 10px;">
+                        <a href="#" style="display: inline-block; margin-right: 10px;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="display: inline-block; margin-right: 10px;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="display: inline-block;"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 ImageToPDF. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const selectFilesBtn = document.getElementById('selectFilesBtn');
+            const previewContainer = document.getElementById('previewContainer');
+            const convertBtn = document.getElementById('convertBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const compressionLevels = document.querySelectorAll('.compression-level');
+            const qualityRange = document.getElementById('qualityRange');
+            const qualityValue = document.getElementById('qualityValue');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // State
+            let selectedImages = [];
+            let currentCompressionLevel = 'high';
+            let currentQuality = 80;
+            
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            
+            // Event Listeners
+            selectFilesBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+            convertBtn.addEventListener('click', convertToPdf);
+            clearBtn.addEventListener('click', clearAll);
+            qualityRange.addEventListener('input', updateQuality);
+            
+            // Compression level selection
+            compressionLevels.forEach(level => {
+                level.addEventListener('click', function() {
+                    compressionLevels.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCompressionLevel = this.getAttribute('data-level');
+                    updateQualityBasedOnLevel();
+                });
+            });
+            
+            // Functions
+            function handleDragOver(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary)';
+                uploadArea.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+            }
+            
+            function handleDrop(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#ccc';
+                uploadArea.style.backgroundColor = 'transparent';
+                
+                const files = e.dataTransfer.files;
+                processFiles(files);
+            }
+            
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                processFiles(files);
+            }
+            
+            function processFiles(files) {
+                if (files.length === 0) return;
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    if (!file.type.match('image.*')) {
+                        showStatus('Please select only image files.', 'error');
+                        continue;
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const imageData = {
+                            id: Date.now() + i,
+                            name: file.name,
+                            dataUrl: e.target.result,
+                            file: file
+                        };
+                        
+                        selectedImages.push(imageData);
+                        createPreview(imageData);
+                        updateConvertButton();
+                    };
+                    
+                    reader.onerror = function() {
+                        showStatus('Error reading file: ' + file.name, 'error');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+                
+                // Reset file input to allow selecting the same files again
+                fileInput.value = '';
+            }
+            
+            function createPreview(imageData) {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.setAttribute('data-id', imageData.id);
+                
+                const img = document.createElement('img');
+                img.src = imageData.dataUrl;
+                img.alt = imageData.name;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener('click', function() {
+                    removeImage(imageData.id);
+                });
+                
+                previewItem.appendChild(img);
+                previewItem.appendChild(removeBtn);
+                previewContainer.appendChild(previewItem);
+            }
+            
+            function removeImage(id) {
+                selectedImages = selectedImages.filter(img => img.id !== id);
+                
+                const previewItem = document.querySelector(`.preview-item[data-id="${id}"]`);
+                if (previewItem) {
+                    previewItem.remove();
+                }
+                
+                updateConvertButton();
+            }
+            
+            function clearAll() {
+                selectedImages = [];
+                previewContainer.innerHTML = '';
+                updateConvertButton();
+                downloadBtn.classList.add('hidden');
+                hideStatus();
+            }
+            
+            function updateConvertButton() {
+                convertBtn.disabled = selectedImages.length === 0;
+            }
+            
+            function updateQuality() {
+                currentQuality = qualityRange.value;
+                qualityValue.textContent = currentQuality;
+            }
+            
+            function updateQualityBasedOnLevel() {
+                switch(currentCompressionLevel) {
+                    case 'high':
+                        qualityRange.value = 90;
+                        break;
+                    case 'medium':
+                        qualityRange.value = 70;
+                        break;
+                    case 'low':
+                        qualityRange.value = 50;
+                        break;
+                }
+                updateQuality();
+            }
+            
+            function convertToPdf() {
+                if (selectedImages.length === 0) return;
+                
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+                hideStatus();
+                
+                try {
+                    // Create a new PDF document
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    let pageAdded = false;
+                    
+                    // Process each image
+                    selectedImages.forEach((imageData, index) => {
+                        const img = new Image();
+                        img.src = imageData.dataUrl;
+                        
+                        img.onload = function() {
+                            // Calculate dimensions to fit the page
+                            const pageWidth = pdf.internal.pageSize.getWidth();
+                            const pageHeight = pdf.internal.pageSize.getHeight();
+                            
+                            let imgWidth = img.width;
+                            let imgHeight = img.height;
+                            
+                            // Calculate aspect ratio
+                            const ratio = Math.min(
+                                pageWidth / imgWidth,
+                                pageHeight / imgHeight
+                            );
+                            
+                            imgWidth = imgWidth * ratio;
+                            imgHeight = imgHeight * ratio;
+                            
+                            // Calculate position to center the image
+                            const x = (pageWidth - imgWidth) / 2;
+                            const y = (pageHeight - imgHeight) / 2;
+                            
+                            // Add a new page for each image after the first one
+                            if (pageAdded) {
+                                pdf.addPage();
+                            }
+                            
+                            // Add image to PDF with quality based on compression setting
+                            const format = getImageFormat(imageData.file.type);
+                            pdf.addImage(img, format, x, y, imgWidth, imgHeight, null, 'FAST');
+                            
+                            pageAdded = true;
+                            
+                            // If this is the last image, save the PDF
+                            if (index === selectedImages.length - 1) {
+                                // Generate PDF blob
+                                const pdfBlob = pdf.output('blob');
+                                const pdfUrl = URL.createObjectURL(pdfBlob);
+                                
+                                // Set up download link
+                                downloadBtn.href = pdfUrl;
+                                downloadBtn.download = 'converted_images.pdf';
+                                downloadBtn.classList.remove('hidden');
+                                
+                                // Reset convert button
+                                convertBtn.disabled = false;
+                                convertBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Convert to PDF';
+                                
+                                showStatus(`PDF created successfully with ${selectedImages.length} images!`, 'success');
+                                
+                                // Scroll to download button
+                                downloadBtn.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        };
+                        
+                        img.onerror = function() {
+                            convertBtn.disabled = false;
+                            convertBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Convert to PDF';
+                            showStatus(`Error loading image: ${imageData.name}`, 'error');
+                        };
+                    });
+                } catch (error) {
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Convert to PDF';
+                    showStatus('Error creating PDF: ' + error.message, 'error');
+                    console.error('PDF creation error:', error);
+                }
+            }
+            
+            function getImageFormat(mimeType) {
+                switch(mimeType) {
+                    case 'image/jpeg':
+                        return 'JPEG';
+                    case 'image/png':
+                        return 'PNG';
+                    case 'image/gif':
+                        return 'GIF';
+                    case 'image/bmp':
+                        return 'BMP';
+                    default:
+                        return 'JPEG';
+                }
+            }
+            
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = `status-message status-${type}`;
+                statusMessage.classList.remove('hidden');
+            }
+            
+            function hideStatus() {
+                statusMessage.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
