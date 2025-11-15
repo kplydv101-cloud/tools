@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -883,6 +883,7 @@
         // Selected format
         let selectedFormat = 'jpg';
         let originalFile = null;
+        let convertedImageData = null;
 
         // Event Listeners
         mobileMenuBtn.addEventListener('click', () => {
@@ -977,44 +978,106 @@
         }
 
         function convertImage() {
-            // In a real implementation, this would convert the image
-            // For this demo, we'll simulate conversion with a timeout
-            
+            if (!originalFile) {
+                alert('Please select an image first');
+                return;
+            }
+
             convertBtn.disabled = true;
             convertBtn.textContent = 'Converting...';
             conversionStatus.textContent = 'Converting...';
             
-            setTimeout(() => {
-                // Simulate conversion results
-                const originalSizeValue = parseFloat(originalSize.textContent);
-                const qualityFactor = parseInt(qualityLevel.value) / 100;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
                 
-                // Different formats have different typical compression ratios
-                let sizeMultiplier = 1;
-                if (selectedFormat === 'jpg') sizeMultiplier = 0.7;
-                else if (selectedFormat === 'webp') sizeMultiplier = 0.6;
-                else if (selectedFormat === 'png') sizeMultiplier = 1.2;
-                else if (selectedFormat === 'gif') sizeMultiplier = 0.9;
-                else if (selectedFormat === 'bmp') sizeMultiplier = 1.5;
+                // Convert to selected format
+                const quality = parseInt(qualityLevel.value) / 100;
+                let mimeType = 'image/jpeg';
                 
-                const newSize = originalSizeValue * sizeMultiplier * qualityFactor;
+                switch(selectedFormat) {
+                    case 'jpg':
+                    case 'jpeg':
+                        mimeType = 'image/jpeg';
+                        break;
+                    case 'png':
+                        mimeType = 'image/png';
+                        break;
+                    case 'webp':
+                        mimeType = 'image/webp';
+                        break;
+                    case 'gif':
+                        mimeType = 'image/gif';
+                        break;
+                    case 'bmp':
+                        mimeType = 'image/bmp';
+                        break;
+                }
                 
-                convertedSize.textContent = formatFileSize(newSize * 1024);
-                conversionStatus.textContent = 'Converted';
-                
-                // Update converted preview (in a real app, this would show the actual converted image)
-                convertedPreview.src = originalPreview.src;
-                
-                // Enable download button
-                downloadBtn.disabled = false;
-                
-                // Reset convert button
-                convertBtn.disabled = false;
-                convertBtn.textContent = 'Convert Image';
-                
-                // Show success message
-                alert(`Image successfully converted to ${selectedFormat.toUpperCase()} format!`);
-            }, 1500);
+                try {
+                    // Get the converted image data
+                    const dataURL = canvas.toDataURL(mimeType, quality);
+                    convertedPreview.src = dataURL;
+                    convertedImageData = dataURL;
+                    
+                    // Calculate file size (approximate)
+                    const base64String = dataURL.split(',')[1];
+                    const binaryString = atob(base64String);
+                    const bytes = new Uint8Array(binaryString.length);
+                    
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    
+                    const fileSize = bytes.length;
+                    convertedSize.textContent = formatFileSize(fileSize);
+                    conversionStatus.textContent = 'Converted';
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Reset convert button
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = 'Convert Image';
+                    
+                    // Show success message
+                    alert(`Image successfully converted to ${selectedFormat.toUpperCase()} format!`);
+                } catch (error) {
+                    console.error('Conversion error:', error);
+                    alert('Error converting image. Please try again.');
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = 'Convert Image';
+                    conversionStatus.textContent = 'Error';
+                }
+            };
+            
+            img.src = URL.createObjectURL(originalFile);
+        }
+
+        function downloadImage() {
+            if (!convertedImageData) {
+                alert('Please convert an image first');
+                return;
+            }
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = convertedImageData;
+            
+            // Generate filename
+            const originalName = originalFile.name.split('.')[0];
+            const extension = selectedFormat === 'jpg' ? 'jpeg' : selectedFormat;
+            link.download = `${originalName}_converted.${extension}`;
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function resetTool() {
@@ -1034,17 +1097,12 @@
             convertBtn.disabled = false;
             downloadBtn.disabled = true;
             originalFile = null;
+            convertedImageData = null;
             
             // Reset format selection
             formatOptions.forEach(opt => opt.classList.remove('selected'));
             formatOptions[0].classList.add('selected');
             selectedFormat = 'jpg';
-        }
-
-        function downloadImage() {
-            // In a real implementation, this would download the converted image
-            // For this demo, we'll just show an alert
-            alert(`Downloading image as ${selectedFormat.toUpperCase()} file...`);
         }
 
         function formatFileSize(bytes) {
