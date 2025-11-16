@@ -453,6 +453,199 @@
             font-size: 0.9rem;
         }
 
+        /* Auth Modal Styles */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-modal.active {
+            display: flex;
+        }
+
+        .auth-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-header {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--gray);
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .auth-body {
+            padding: 30px;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .auth-method-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .auth-method-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .auth-method-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .timer {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--gray);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info.active {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: underline;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .hero-content {
@@ -525,6 +718,10 @@
             .cta h2 {
                 font-size: 2rem;
             }
+
+            .auth-container {
+                width: 90%;
+            }
         }
 
         @media (max-width: 576px) {
@@ -552,6 +749,15 @@
                 padding: 60px 20px;
                 margin: 20px 10px;
             }
+
+            .otp-inputs {
+                gap: 5px;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
@@ -574,12 +780,16 @@
                         <li><a href="/tools/img-pdf.html">PDF Tools</a></li>
                         <li><a href="/tools/img-converter.html">Other Tools</a></li>
                         <li><a href="/tools/img-resizer.html">Resizer</a></li>
-                        
                     </ul>
                 </nav>
                 <div class="auth-buttons">
-                    <a href="/login" class="btn btn-outline">Log In</a>
-                    <a href="/signup" class="btn btn-primary">Sign Up</a>
+                    <button class="btn btn-outline" id="loginBtn">Log In</button>
+                    <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                </div>
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-name" id="userName">User</div>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
                 </div>
             </div>
         </div>
@@ -767,7 +977,6 @@
                         <li><a href="/tools/img-resizer.html">Image Resizer</a></li>
                         <li><a href="/tools/img-converter.html">Format Converter</a></li>
                         <li><a href="/tools/img-resizer.html">Background Remover</a></li>
-                         
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -777,7 +986,6 @@
                         <li><a href="/tools/img-merger.html">PDF Merger</a></li>
                         <li><a href="/tools/img-spliter.html">PDF Splitter</a></li>
                         <li><a href="/tools/img-word.html">PDF to Word</a></li>
-                        
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -796,6 +1004,98 @@
             </div>
         </div>
     </footer>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-container">
+            <div class="auth-header">
+                <button class="auth-tab active" id="loginTab">Log In</button>
+                <button class="auth-tab" id="signupTab">Sign Up</button>
+            </div>
+            <div class="auth-body">
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="auth-method-tabs">
+                        <button type="button" class="auth-method-tab active" data-method="phone">Phone</button>
+                        <button type="button" class="auth-method-tab" data-method="email">Email</button>
+                    </div>
+                    
+                    <div class="form-group" id="loginPhoneGroup">
+                        <label for="loginPhone">Phone Number</label>
+                        <input type="tel" class="form-control" id="loginPhone" placeholder="+1 234 567 8900" required>
+                    </div>
+                    
+                    <div class="form-group" id="loginEmailGroup" style="display: none;">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" class="form-control" id="loginEmail" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-large" id="loginSendOtp" style="width: 100%;">Send OTP</button>
+                    
+                    <div class="form-group" id="loginOtpGroup" style="display: none;">
+                        <label for="loginOtp">Enter OTP</label>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" data-index="0">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1">
+                            <input type="text" class="otp-input" maxlength="1" data-index="2">
+                            <input type="text" class="otp-input" maxlength="1" data-index="3">
+                            <input type="text" class="otp-input" maxlength="1" data-index="4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="5">
+                        </div>
+                        <div class="timer" id="loginTimer">02:00</div>
+                        <button type="button" class="btn btn-primary" id="loginVerifyOtp" style="width: 100%;">Verify OTP</button>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <p>By continuing, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+                    </div>
+                </form>
+                
+                <!-- Signup Form -->
+                <form class="auth-form" id="signupForm">
+                    <div class="auth-method-tabs">
+                        <button type="button" class="auth-method-tab active" data-method="phone">Phone</button>
+                        <button type="button" class="auth-method-tab" data-method="email">Email</button>
+                    </div>
+                    
+                    <div class="form-group" id="signupNameGroup">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" class="form-control" id="signupName" placeholder="John Doe" required>
+                    </div>
+                    
+                    <div class="form-group" id="signupPhoneGroup">
+                        <label for="signupPhone">Phone Number</label>
+                        <input type="tel" class="form-control" id="signupPhone" placeholder="+1 234 567 8900" required>
+                    </div>
+                    
+                    <div class="form-group" id="signupEmailGroup" style="display: none;">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" class="form-control" id="signupEmail" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-large" id="signupSendOtp" style="width: 100%;">Send OTP</button>
+                    
+                    <div class="form-group" id="signupOtpGroup" style="display: none;">
+                        <label for="signupOtp">Enter OTP</label>
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" data-index="0">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1">
+                            <input type="text" class="otp-input" maxlength="1" data-index="2">
+                            <input type="text" class="otp-input" maxlength="1" data-index="3">
+                            <input type="text" class="otp-input" maxlength="1" data-index="4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="5">
+                        </div>
+                        <div class="timer" id="signupTimer">02:00</div>
+                        <button type="button" class="btn btn-primary" id="signupVerifyOtp" style="width: 100%;">Verify OTP</button>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <p>By continuing, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Mobile menu toggle
@@ -834,6 +1134,324 @@
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             observer.observe(card);
+        });
+
+        // Authentication System
+        document.addEventListener('DOMContentLoaded', function() {
+            const authModal = document.getElementById('authModal');
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInfo = document.getElementById('userInfo');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            
+            // Check if user is already logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                showUserInfo(currentUser);
+            }
+            
+            // Open login modal
+            loginBtn.addEventListener('click', function() {
+                authModal.classList.add('active');
+                switchToLogin();
+            });
+            
+            // Open signup modal
+            signupBtn.addEventListener('click', function() {
+                authModal.classList.add('active');
+                switchToSignup();
+            });
+            
+            // Switch to login tab
+            loginTab.addEventListener('click', switchToLogin);
+            
+            // Switch to signup tab
+            signupTab.addEventListener('click', switchToSignup);
+            
+            // Close modal when clicking outside
+            authModal.addEventListener('click', function(e) {
+                if (e.target === authModal) {
+                    closeModal();
+                }
+            });
+            
+            // Logout functionality
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('currentUser');
+                userInfo.classList.remove('active');
+                document.querySelector('.auth-buttons').style.display = 'flex';
+            });
+            
+            // Switch between phone and email authentication
+            document.querySelectorAll('.auth-method-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const method = this.getAttribute('data-method');
+                    const form = this.closest('.auth-form');
+                    
+                    // Update active tab
+                    form.querySelectorAll('.auth-method-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show appropriate fields
+                    if (form.id === 'loginForm') {
+                        if (method === 'phone') {
+                            document.getElementById('loginPhoneGroup').style.display = 'block';
+                            document.getElementById('loginEmailGroup').style.display = 'none';
+                        } else {
+                            document.getElementById('loginPhoneGroup').style.display = 'none';
+                            document.getElementById('loginEmailGroup').style.display = 'block';
+                        }
+                    } else {
+                        if (method === 'phone') {
+                            document.getElementById('signupPhoneGroup').style.display = 'block';
+                            document.getElementById('signupEmailGroup').style.display = 'none';
+                        } else {
+                            document.getElementById('signupPhoneGroup').style.display = 'none';
+                            document.getElementById('signupEmailGroup').style.display = 'block';
+                        }
+                    }
+                });
+            });
+            
+            // Send OTP for login
+            document.getElementById('loginSendOtp').addEventListener('click', function() {
+                const method = document.querySelector('#loginForm .auth-method-tab.active').getAttribute('data-method');
+                let identifier;
+                
+                if (method === 'phone') {
+                    identifier = document.getElementById('loginPhone').value;
+                    if (!identifier) {
+                        alert('Please enter your phone number');
+                        return;
+                    }
+                } else {
+                    identifier = document.getElementById('loginEmail').value;
+                    if (!identifier) {
+                        alert('Please enter your email address');
+                        return;
+                    }
+                }
+                
+                // Simulate sending OTP
+                document.getElementById('loginOtpGroup').style.display = 'block';
+                startTimer('loginTimer');
+                
+                // In a real application, you would send a request to your backend here
+                console.log(`Sending OTP to ${identifier} for login`);
+            });
+            
+            // Send OTP for signup
+            document.getElementById('signupSendOtp').addEventListener('click', function() {
+                const method = document.querySelector('#signupForm .auth-method-tab.active').getAttribute('data-method');
+                const name = document.getElementById('signupName').value;
+                let identifier;
+                
+                if (!name) {
+                    alert('Please enter your full name');
+                    return;
+                }
+                
+                if (method === 'phone') {
+                    identifier = document.getElementById('signupPhone').value;
+                    if (!identifier) {
+                        alert('Please enter your phone number');
+                        return;
+                    }
+                } else {
+                    identifier = document.getElementById('signupEmail').value;
+                    if (!identifier) {
+                        alert('Please enter your email address');
+                        return;
+                    }
+                }
+                
+                // Simulate sending OTP
+                document.getElementById('signupOtpGroup').style.display = 'block';
+                startTimer('signupTimer');
+                
+                // In a real application, you would send a request to your backend here
+                console.log(`Sending OTP to ${identifier} for signup`);
+            });
+            
+            // Verify OTP for login
+            document.getElementById('loginVerifyOtp').addEventListener('click', function() {
+                const otp = getOtpValue('loginForm');
+                
+                if (otp.length !== 6) {
+                    alert('Please enter the complete 6-digit OTP');
+                    return;
+                }
+                
+                // Simulate OTP verification
+                const method = document.querySelector('#loginForm .auth-method-tab.active').getAttribute('data-method');
+                let identifier;
+                
+                if (method === 'phone') {
+                    identifier = document.getElementById('loginPhone').value;
+                } else {
+                    identifier = document.getElementById('loginEmail').value;
+                }
+                
+                // In a real application, you would verify the OTP with your backend
+                // For demo purposes, we'll accept any 6-digit code
+                const user = {
+                    name: identifier.split('@')[0] || identifier,
+                    identifier: identifier,
+                    method: method
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showUserInfo(user);
+                closeModal();
+                
+                alert('Login successful!');
+            });
+            
+            // Verify OTP for signup
+            document.getElementById('signupVerifyOtp').addEventListener('click', function() {
+                const otp = getOtpValue('signupForm');
+                const name = document.getElementById('signupName').value;
+                
+                if (otp.length !== 6) {
+                    alert('Please enter the complete 6-digit OTP');
+                    return;
+                }
+                
+                // Simulate OTP verification
+                const method = document.querySelector('#signupForm .auth-method-tab.active').getAttribute('data-method');
+                let identifier;
+                
+                if (method === 'phone') {
+                    identifier = document.getElementById('signupPhone').value;
+                } else {
+                    identifier = document.getElementById('signupEmail').value;
+                }
+                
+                // In a real application, you would verify the OTP with your backend
+                // For demo purposes, we'll accept any 6-digit code
+                const user = {
+                    name: name,
+                    identifier: identifier,
+                    method: method
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showUserInfo(user);
+                closeModal();
+                
+                alert('Account created successfully!');
+            });
+            
+            // OTP input navigation
+            document.querySelectorAll('.otp-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = this.value;
+                    const index = parseInt(this.getAttribute('data-index'));
+                    
+                    if (value && index < 5) {
+                        const nextInput = this.parentElement.querySelector(`.otp-input[data-index="${index + 1}"]`);
+                        nextInput.focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && this.previousElementSibling) {
+                        const prevInput = this.previousElementSibling;
+                        prevInput.focus();
+                    }
+                });
+            });
+            
+            function switchToLogin() {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                resetForms();
+            }
+            
+            function switchToSignup() {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                resetForms();
+            }
+            
+            function closeModal() {
+                authModal.classList.remove('active');
+                resetForms();
+            }
+            
+            function resetForms() {
+                // Reset all form fields
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.value = '';
+                });
+                
+                document.querySelectorAll('.otp-input').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Hide OTP sections
+                document.getElementById('loginOtpGroup').style.display = 'none';
+                document.getElementById('signupOtpGroup').style.display = 'none';
+                
+                // Reset to phone method
+                document.querySelectorAll('.auth-method-tab').forEach(tab => {
+                    if (tab.getAttribute('data-method') === 'phone') {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+                
+                document.getElementById('loginPhoneGroup').style.display = 'block';
+                document.getElementById('loginEmailGroup').style.display = 'none';
+                document.getElementById('signupPhoneGroup').style.display = 'block';
+                document.getElementById('signupEmailGroup').style.display = 'none';
+            }
+            
+            function getOtpValue(formId) {
+                const inputs = document.querySelectorAll(`#${formId} .otp-input`);
+                let otp = '';
+                inputs.forEach(input => {
+                    otp += input.value;
+                });
+                return otp;
+            }
+            
+            function startTimer(timerId) {
+                let timeLeft = 120; // 2 minutes in seconds
+                const timerElement = document.getElementById(timerId);
+                
+                const timer = setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    
+                    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        timerElement.textContent = 'OTP expired';
+                    }
+                    
+                    timeLeft--;
+                }, 1000);
+            }
+            
+            function showUserInfo(user) {
+                userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                userName.textContent = user.name;
+                userInfo.classList.add('active');
+                document.querySelector('.auth-buttons').style.display = 'none';
+            }
         });
     </script>
 </body>
